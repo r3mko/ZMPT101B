@@ -5,7 +5,7 @@
 	"version": "0.0.1",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Abdurraziq/ZMPT101B-arduino"
+		"url": "https://github.com/r3mko/ZMPT101B"
 	},
 	"platforms": ["atmelavr", "espressif8266", "espressif32"]
 }

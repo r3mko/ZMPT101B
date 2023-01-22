@@ -15,6 +15,7 @@ ZMPT101B_type	KEYWORD1
 
 calibrate	KEYWORD2
 setZeroPoint	KEYWORD2
+setVref KEYWORD2
 setSensitivity	KEYWORD2
 getVoltageDC	KEYWORD2
 getVoltageAC	KEYWORD2

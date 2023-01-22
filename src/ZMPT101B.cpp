@@ -18,6 +18,10 @@ void ZMPT101B::setZeroPoint(int _zero) {
 	zero = _zero;
 }
 
+void ZMPT101B::setVref(float _Vref) {
+	Vref = _Vref;
+}
+
 void ZMPT101B::setSensitivity(float sens) {
 	sensitivity = sens;
 }
@@ -27,7 +31,7 @@ float ZMPT101B::getVoltageDC() {
 	for (int i = 0; i < 10; i++) {
 		acc += analogRead(pin) - zero;
 	}
-	float V = (float)acc / 10.0 / ADC_SCALE * VREF / sensitivity;
+	float V = (float)acc / 10.0 / ADC_SCALE * Vref / sensitivity;
 	return V;
 }
 
@@ -44,6 +48,6 @@ float ZMPT101B::getVoltageAC(uint16_t frequency) {
 		measurements_count++;
 	}
 
-	float Vrms = sqrt(Vsum / measurements_count) / ADC_SCALE * VREF / sensitivity;
+	float Vrms = sqrt(Vsum / measurements_count) / ADC_SCALE * Vref / sensitivity;
 	return Vrms;
 }
