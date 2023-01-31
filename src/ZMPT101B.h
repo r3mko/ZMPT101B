@@ -5,8 +5,8 @@
 
 #define ADC_SCALE 1023.0
 #define VREF 5.0
-#define FREQUENCY 50
 #define ZEROPOINT 512
+#define FREQUENCY 50
 
 class ZMPT101B {
 public:
