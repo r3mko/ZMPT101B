@@ -12,6 +12,8 @@ class ZMPT101B {
 public:
 	ZMPT101B(uint8_t _pin);
 	int calibrate();
+	int calibrateLive();
+	float calibrateVoltage();
 	void setZeroPoint(int _zero);
 	void setVref(float _Vref);
 	void setSensitivity(float sens);
@@ -20,6 +22,7 @@ public:
 
 private:
 	int zero = ZEROPOINT;
+	float Vzero = VREF / 2.0;
 	float Vref = VREF;
 	float sensitivity;
 	uint8_t pin;

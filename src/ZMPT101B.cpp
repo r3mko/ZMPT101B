@@ -2,7 +2,10 @@
 
 ZMPT101B::ZMPT101B(uint8_t _pin) {
 	pin = _pin;
-	sensitivity = 0.001000;
+
+	// Sensor ouput Vmax - (Vref / 2) / Sensor input Vmax
+	// Input Vmax = Vrms * sqrt(2) = Vrms * 1.414
+	sensitivity = 0.010000;
 }
 
 int ZMPT101B::calibrate() {
@@ -14,6 +17,31 @@ int ZMPT101B::calibrate() {
 	zero = acc / 10;
 
 	return zero;
+}
+
+int ZMPT101B::calibrateLive() {
+	uint16_t acc = 0;
+
+	for (int i = 0; i < 100; i++) {
+		acc += analogRead(pin);
+		delayMicroseconds(1000);
+	}
+	zero = acc / 100;
+
+	return zero;
+}
+
+float ZMPT101B::calibrateVoltage() {
+	uint16_t acc = 0;
+
+	for (int i = 0; i < 100; i++) {
+		acc += analogRead(pin);
+		delayMicroseconds(1000);
+	}
+	zero = acc / 100;
+	Vzero = zero * Vref / ADC_SCALE;
+
+	return Vzero;
 }
 
 void ZMPT101B::setZeroPoint(int _zero) {
