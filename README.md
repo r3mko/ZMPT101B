@@ -12,7 +12,7 @@ This library is based on [Ruslan Koptev](https://github.com/rkoptev) ACS712 curr
 ZMPT101B(uint8_t _pin)
 ```
 
-Constructor has a parameters for analog input to which it is connected.
+The constructor with the analog input to which it is connected.
 
 ### **getVoltagetAC()**
 
@@ -20,7 +20,7 @@ Constructor has a parameters for analog input to which it is connected.
 float getVoltageAC(uint16_t frequency )
 ```
 
-This method allows you to measure AC voltage. Frequency is measured in Hz. By default frequency is set to 50 Hz. Method use the Root Mean Square technique for the measurement. The measurement itself takes time of one full period (1second / frequency). RMS method allow us to measure complex signals different from the perfect sine wave.
+This method allows you to measure AC voltage. Frequency is measured in Hz. By default frequency is set to 50 Hz. We use the Root Mean Square technique for the measurements. The measurement itself takes time of one full period (1 second / frequency). The RMS calculation allows us to measure more complex signals that are different from the perfect sine wave.
 
 ### **calibrate()**
 
@@ -28,7 +28,23 @@ This method allows you to measure AC voltage. Frequency is measured in Hz. By de
 int calibrate()
 ```
 
-This method reads the current value of the sensor and sets it as a reference point of measurement, and then returns this value. By default, this parameter is equal to half of the maximum value on analog input - 512; however, sometimes this value may vary. It depends on the individual sensor, power issues etc… It is better to execute this method at the beginning of each program. Note that when performing this method, no current must flow through the sensor, and since this is not always possible - there is the following method:
+This method reads the current value of the sensor and sets it as the reference point for future measurements, after which the value is returned. By default, this parameter is equal to half of the maximum value of the analog input: (1024/2) 512. However, sometimes (in most cases) this value may vary. It depends on the individual sensor, power issues etc… Note that when performing this method, no current must flow through the sensor, and since this is not always possible - there is the following method:
+
+### **calibrateLive()**
+
+```c++
+int calibrateLive()
+```
+
+This method allows you to calibrate the sensor while current is active. It takes a larger sample size then "calibrate()" and calculates the average of multiple waves as the treference point for future measurements. See this sketch for an example: [Calibrate_zeropoint.ino](https://github.com/r3mko/ZMPT101B/blob/master/examples/Calibrate/Calibrate_zeropoint.ino)
+
+### **calibrateVoltage()**
+
+```c++
+int calibrateVoltage()
+```
+
+This method also calibrates the sensor, like "calibrateLive()", but returns the current voltage instead of the analog value.
 
 ### **setZeroPoint()**
 
@@ -36,7 +52,8 @@ This method reads the current value of the sensor and sets it as a reference poi
 void setZeroPoint( int _zero )
 ```
 
-This method sets the obtained value as a zero point for measurements. You can use the previous method once, in order to find out zero point of your sensor and then use this method in your code to set starting point without reading sensor.
+This method sets the obtained value as a zero point for measurements. You can use the previous method "calibrate()" once, in order to find out zero point of your sensor and then use this method in your code to set the starting zero point without clibrating the sensor everytime.
+You can also use "calibrateLive()" if you want to calibrate it everytime before calling "getVoltageAC()".
 
 ### **setSensitivity()**
 
@@ -44,11 +61,23 @@ This method sets the obtained value as a zero point for measurements. You can us
 void setSensitivity( float sens )
 ```
 
-This method sets the sensitivity value of the sensor. This sensitivity value indicates how much the output voltage value read by the ADC is compared to the value of the measured voltage source. The default value is 0.001.
+This method sets the sensitivity value of the sensor. The sensitivity value indicates how much the output voltage value, read by the ADC, is compared to the value of the measured voltage source. The default value is 0.010000.
+You can calculate an estimate by using the following method:
 
-## Example
+```
+Sensor ouput Vmax - (Vref / 2) / Sensor input Vmax
+```
+
+To calulate the input Vmax use the following method:
+
+```
+Input Vmax = Vrms * sqrt(2) = Vrms * 1.414
+```
+
+## Examples
 
 This is an example of measuring electrical power using the zmpt101b sensor for voltage measurement and acs712 sensor for current measurements.
+There are also examples for calibrating the sensor itself (with the Arduino IDE serial plotter) and finding the zero point offset.
 
 ### Circuit
 
@@ -56,47 +85,39 @@ This is an example of measuring electrical power using the zmpt101b sensor for v
 
 ### Code
 
-This example code use this [ACS712 library for arduino](https://github.com/rkoptev/ACS712-arduino).
-
 ```c++
-#include "ZMPT101B.h"
-#include "ACS712.h"
+#include <ZMPT101B.h>
 
-// ZMPT101B sensor connected to A0 pin of arduino
+// ZMPT101B sensor connected to the A0 pin
 ZMPT101B voltageSensor(A0);
-
-// 5 amps version sensor (ACS712_05B) connected to A1 pin of arduino
-ACS712 currentSensor(ACS712_05B, A1);
 
 void setup()
 {
   Serial.begin(9600);
 
-  // calibrate() method calibrates zero point of sensor,
-  // It is not necessary, but may positively affect the accuracy
-  // Ensure that no current flows through the sensor at this moment
-  Serial.println("Calibrating... Ensure that no current flows through the sensor at this moment");
-  delay(100);
-  voltageSensor.calibrate();
-  currentSensor.calibrate();
-  Serial.println("Done!");
+  // Set Vref, defaults to 5.0 (V)
+  voltageSensor.setVref(5.0);
+
+  // Set zero point, defaults to 512
+  // or use calibrateLive() in the main loop
+  voltageSensor.setZeroPoint(512);
+
+  // Set sensitivity, to give you an estimate use the following method:
+  // Sensor ouput Vmax - (Vref / 2) / Sensor input Vmax = sensitivity value
+  voltageSensor.setSensitivity(0.010000);
 }
 
 void loop()
 {
-  // To measure voltage/current we need to know the frequency of voltage/current
-  // By default 50Hz is used, but you can specify desired frequency
-  // as first argument to getVoltageAC and getCurrentAC() method, if necessary
+  // Set zero point while sensor is live
+  voltageSensor.calibrateLive();
 
-  float U = voltageSensor.getVoltageAC();
-  float I = currentSensor.getCurrentAC();
+  // To measure the voltage we need to know the frequency
+  // By default 50Hz is used, but you can specify the desired frequency
+  // as the first argument for "getVoltageAC()"
+  float V = voltageSensor.getVoltageAC();
 
-  // To calculate the power we need voltage multiplied by current
-  float P = U * I;
-
-  Serial.println(String("U = ") + U + " V");
-  Serial.println(String("I = ") + I + " A");
-  Serial.println(String("P = ") + P + " Watts");
+  Serial.println(String(V) + " V");
 
   delay(1000);
 }
