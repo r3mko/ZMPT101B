@@ -41,7 +41,7 @@ This method allows you to calibrate the sensor while current is active. It takes
 ### **calibrateVoltage()**
 
 ```c++
-int calibrateVoltage()
+float calibrateVoltage()
 ```
 
 This method also calibrates the sensor, like "calibrateLive()", but returns the current voltage instead of the analog value.
