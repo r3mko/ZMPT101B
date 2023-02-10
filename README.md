@@ -9,7 +9,7 @@ This library is based on [Ruslan Koptev](https://github.com/rkoptev) ACS712 curr
 ### **Constructor**
 
 ```c++
-ZMPT101B(uint8_t _pin)
+ZMPT101B( uint8_t _pin )
 ```
 
 The constructor with the analog input to which it is connected.
@@ -17,7 +17,7 @@ The constructor with the analog input to which it is connected.
 ### **getVoltagetAC()**
 
 ```c++
-float getVoltageAC(uint16_t frequency )
+float getVoltageAC( uint16_t frequency )
 ```
 
 This method allows you to measure AC voltage. Frequency is measured in Hz. By default frequency is set to 50 Hz. We use the Root Mean Square technique for the measurements. The measurement itself takes time of one full period (1 second / frequency). The RMS calculation allows us to measure more complex signals that are different from the perfect sine wave.
@@ -49,7 +49,7 @@ This method also calibrates the sensor, like "calibrateLive()", but returns the 
 ### **setZeroPoint()**
 
 ```c++
-void setZeroPoint( int _zero )
+void setZeroPoint( uint16_t _zero )
 ```
 
 This method sets the obtained value as a zero point for measurements. You can use the previous method "calibrate()" once, in order to find out zero point of your sensor and then use this method in your code to set the starting zero point without clibrating the sensor everytime.
@@ -91,8 +91,7 @@ There are also examples for calibrating the sensor itself (with the Arduino IDE 
 // ZMPT101B sensor connected to the A0 pin
 ZMPT101B voltageSensor(A0);
 
-void setup()
-{
+void setup() {
   Serial.begin(9600);
 
   // Set Vref, defaults to 5.0 (V)
@@ -107,8 +106,7 @@ void setup()
   voltageSensor.setSensitivity(0.010000);
 }
 
-void loop()
-{
+void loop() {
   // Set zero point while sensor is live
   voltageSensor.calibrateLive();
 

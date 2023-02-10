@@ -44,7 +44,7 @@ float ZMPT101B::calibrateVoltage() {
 	return Vzero;
 }
 
-void ZMPT101B::setZeroPoint(int _zero) {
+void ZMPT101B::setZeroPoint(uint16_t _zero) {
 	zero = _zero;
 }
 

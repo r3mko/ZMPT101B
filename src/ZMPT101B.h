@@ -14,14 +14,14 @@ public:
 	int calibrate();
 	int calibrateLive();
 	float calibrateVoltage();
-	void setZeroPoint(int _zero);
+	void setZeroPoint(uint16_t _zero);
 	void setVref(float _Vref);
 	void setSensitivity(float sens);
 	float getVoltageDC();
 	float getVoltageAC(uint16_t frequency = FREQUENCY);
 
 private:
-	int zero = ZEROPOINT;
+	uint16_t zero = ZEROPOINT;
 	float Vzero = VREF / 2.0;
 	float Vref = VREF;
 	float sensitivity;
