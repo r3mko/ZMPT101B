@@ -12,7 +12,7 @@ This library is based on [Ruslan Koptev](https://github.com/rkoptev) ACS712 curr
 ZMPT101B( uint8_t _pin )
 ```
 
-The constructor with the analog input to which it is connected.
+The constructor with the analog input pin to which it is connected.
 
 ### **getVoltagetAC()**
 
@@ -20,7 +20,7 @@ The constructor with the analog input to which it is connected.
 float getVoltageAC( uint16_t frequency )
 ```
 
-This method allows you to measure AC voltage. Frequency is measured in Hz. By default frequency is set to 50 Hz. We use the Root Mean Square technique for the measurements. The measurement itself takes time of one full period (1 second / frequency). The RMS calculation allows us to measure more complex signals that are different from the perfect sine wave.
+This method allows you to measure AC voltage. Frequency is measured in Hz. By default frequency is set to 50 Hz. We use the Root Mean Square (RMS) technique for the voltage measurements. The measurement itself takes time of one full period (1 second / frequency). The RMS calculation allows us to measure more complex signals that are different from the perfect sine wave.
 
 ### **calibrate()**
 
@@ -36,7 +36,7 @@ This method reads the current value of the sensor and sets it as the reference p
 int calibrateLive()
 ```
 
-This method allows you to calibrate the sensor while current is active. It takes a larger sample size then "calibrate()" and calculates the average of multiple waves as the treference point for future measurements. See this sketch for an example: [Calibrate_zeropoint.ino](https://github.com/r3mko/ZMPT101B/blob/master/examples/Calibrate/Calibrate_zeropoint.ino)
+This method allows you to calibrate the sensor while current is active. It takes a larger sample size then "calibrate()" and calculates the average of multiple waves as the reference point for future measurements. See this sketch for an example: [Calibrate_zeropoint.ino](https://github.com/r3mko/ZMPT101B/blob/master/examples/Calibrate/Calibrate_zeropoint.ino)
 
 ### **calibrateVoltage()**
 
@@ -52,7 +52,7 @@ This method also calibrates the sensor, like "calibrateLive()", but returns the 
 void setZeroPoint( uint16_t _zero )
 ```
 
-This method sets the obtained value as a zero point for measurements. You can use the previous method "calibrate()" once, in order to find out zero point of your sensor and then use this method in your code to set the starting zero point without clibrating the sensor everytime.
+This method sets the obtained value as a zero point for measurements. You can use the previous method "calibrate()" once, in order to find out the zero point of your sensor and then use this method in your code to set the starting zero point without clibrating the sensor everytime.
 You can also use "calibrateLive()" if you want to calibrate it everytime before calling "getVoltageAC()".
 
 ### **setSensitivity()**
@@ -76,7 +76,7 @@ Input Vmax = Vrms * sqrt(2) = Vrms * 1.414
 
 ## Examples
 
-This is an example of measuring electrical power using the zmpt101b sensor for voltage measurement and acs712 sensor for current measurements.
+This is an example of measuring electrical power using the zmpt101b sensor for voltage measurements.
 There are also examples for calibrating the sensor itself (with the Arduino IDE serial plotter) and finding the zero point offset.
 
 ### Circuit

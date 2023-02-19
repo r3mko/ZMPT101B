@@ -13,9 +13,11 @@ ZMPT101B_type	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-calibrate	KEYWORD2
+calibrate   KEYWORD2
+calibrateLive   KEYWORD2
+calibrateVoltage    KEYWORD2
 setZeroPoint	KEYWORD2
 setVref KEYWORD2
-setSensitivity	KEYWORD2
+setSensitivity  KEYWORD2
 getVoltageDC	KEYWORD2
 getVoltageAC	KEYWORD2
